@@ -55,7 +55,7 @@ public class CallbackServer implements Runnable {
 
     @SuppressWarnings("unused")
     private static final String LOG_TAG = "CallbackServer";
-    
+
     private ServerSocket waitSocket;
     /**
      * The list of JavaScript statements to be sent to JavaScript.
@@ -175,7 +175,7 @@ public class CallbackServer implements Runnable {
     }
 
     /**
-     * Start running the server.  
+     * Start running the server.
      * This is called automatically when the server thread is started.
      */
     public void run() {
@@ -209,17 +209,17 @@ public class CallbackServer implements Runnable {
                             //Log.d(LOG_TAG, "CallbackServer -- Processing GET request");
                         	String js = null;
 
-                            // Wait until there is some data to send, or send empty data every 10 sec 
-                            // to prevent XHR timeout on the client 
-                            synchronized (this) {
-                                while (this.active) {
-                                	if (jsMessageQueue != null) {
-                                		// TODO(agrieve): Should this use popAll() instead?
-                                		js = jsMessageQueue.pop();
-                                	    if (js != null) {
-                                	    	break;
-                                	    }
-                                	}
+                            // Wait until there is some data to send, or send empty data every 10 sec
+                            // to prevent XHR timeout on the client
+                            while (this.active) {
+                                if (jsMessageQueue != null) {
+                                    // TODO(agrieve): Should this use popAll() instead?
+                                    js = jsMessageQueue.pop();
+                                    if (js != null) {
+                                        break;
+                                    }
+                                }
+                                synchronized (this) {
                                     try {
                                         this.wait(10000); // prevent timeout from happening
                                         //Log.d(LOG_TAG, "CallbackServer>>> break <<<");
@@ -270,16 +270,16 @@ public class CallbackServer implements Runnable {
     }
 
     /**
-     * Stop server.  
+     * Stop server.
      * This stops the thread that the server is running on.
      */
     public void stopServer() {
         //Log.d(LOG_TAG, "CallbackServer.stopServer()");
         if (this.active) {
             this.active = false;
-            
+
             try { waitSocket.close(); } catch (IOException ignore) {}
-            
+
             // Break out of server wait
             synchronized (this) {
                 this.notify();
@@ -293,7 +293,7 @@ public class CallbackServer implements Runnable {
     public void destroy() {
         this.stopServer();
     }
-    
+
 	public void onNativeToJsMessageAvailable(NativeToJsMessageQueue queue) {
         synchronized (this) {
         	this.jsMessageQueue = queue;
