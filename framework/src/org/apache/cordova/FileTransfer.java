@@ -248,7 +248,7 @@ public class FileTransfer extends Plugin {
             // http://code.google.com/p/android/issues/detail?id=3164
             // It also causes OOM if HTTPS is used, even on newer devices.
             chunkedMode = chunkedMode && (Build.VERSION.SDK_INT < Build.VERSION_CODES.FROYO || useHttps);
-            		
+
             if (chunkedMode) {
                 conn.setChunkedStreamingMode(maxBufferSize);
                 // Although setChunkedStreamingMode sets this header, setting it explicitly here works
@@ -483,13 +483,11 @@ public class FileTransfer extends Plugin {
                 connection.setRequestProperty("cookie", cookie);
               }
 
+              Log.d(LOG_TAG, "Download file:" + url);
+              connection.setConnectTimeout(10000);
+              connection.setReadTimeout(10000);
               connection.connect();
 
-              Log.d(LOG_TAG, "Download file: " + url);
-
-                connection.connect();
-
-                Log.d(LOG_TAG, "Download file:" + url);
                 InputStream inputStream;
                 try {
                     inputStream = connection.getInputStream();
@@ -509,6 +507,7 @@ public class FileTransfer extends Plugin {
                 }
 
                 outputStream.close();
+                inputStream.close();
 
                 Log.d(LOG_TAG, "Saved file: " + target);
 
